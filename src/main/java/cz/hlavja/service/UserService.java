@@ -7,6 +7,7 @@ import cz.hlavja.repository.AuthorityRepository;
 import cz.hlavja.repository.UserRepository;
 import cz.hlavja.security.AuthoritiesConstants;
 import cz.hlavja.security.SecurityUtils;
+import cz.hlavja.service.dto.GameDTO;
 import cz.hlavja.service.dto.UserDTO;
 
 import io.github.jhipster.security.RandomUtil;

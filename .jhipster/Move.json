@@ -1,0 +1,45 @@
+{
+  "name": "Move",
+  "fields": [
+    {
+      "fieldName": "boardX",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "boardY",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "created",
+      "fieldType": "Instant"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "move",
+      "relationshipName": "player",
+      "otherEntityField": "id"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "game",
+      "otherEntityRelationshipName": "move",
+      "relationshipName": "game",
+      "otherEntityField": "id"
+    }
+  ],
+  "changelogDate": "20201219201906",
+  "javadoc": "The Move entity.\\n@author hlavja",
+  "entityTableName": "move",
+  "dto": "mapstruct",
+  "pagination": "no",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": "*"
+}

@@ -37,9 +37,9 @@ spring:
       indent-output: true
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:postgresql://localhost:5432/TicTacToe
-    username: TicTacToe
-    password:
+    url: jdbc:postgresql://localhost:5432/tictactoe
+    username: tictactoe
+    password: tictactoe
     hikari:
       poolName: Hikari
       auto-commit: false

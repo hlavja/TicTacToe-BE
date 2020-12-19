@@ -1,0 +1,56 @@
+{
+  "name": "Game",
+  "fields": [
+    {
+      "fieldName": "created",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "gameStatus",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "gameType",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "result",
+      "fieldType": "String"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "game",
+      "relationshipName": "firstPlayer",
+      "otherEntityField": "id"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "game",
+      "relationshipName": "secondPlayer",
+      "otherEntityField": "id"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "game",
+      "relationshipName": "winningPlayer",
+      "otherEntityField": "id"
+    }
+  ],
+  "changelogDate": "20201219201806",
+  "javadoc": "The Game entity.\\n@author hlavja",
+  "entityTableName": "game",
+  "dto": "mapstruct",
+  "pagination": "no",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": "*"
+}

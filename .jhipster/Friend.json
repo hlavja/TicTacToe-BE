@@ -1,0 +1,32 @@
+{
+  "name": "Friend",
+  "fields": [],
+  "relationships": [
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "friend",
+      "relationshipName": "user",
+      "otherEntityField": "id"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "friend",
+      "relationshipName": "friendWith",
+      "otherEntityField": "id"
+    }
+  ],
+  "changelogDate": "20201219201706",
+  "javadoc": "The Friend entity.\\n@author hlavja",
+  "entityTableName": "friend",
+  "dto": "mapstruct",
+  "pagination": "no",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": "*"
+}
