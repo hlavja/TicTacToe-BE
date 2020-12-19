@@ -1,0 +1,38 @@
+{
+  "generator-jhipster": {
+    "promptValues": {
+      "packageName": "cz.hlavja"
+    },
+    "jhipsterVersion": "6.10.5",
+    "applicationType": "monolith",
+    "baseName": "TicTacToe",
+    "packageName": "cz.hlavja",
+    "packageFolder": "cz/hlavja",
+    "serverPort": "8080",
+    "authenticationType": "jwt",
+    "cacheProvider": "ehcache",
+    "enableHibernateCache": false,
+    "websocket": "spring-websocket",
+    "databaseType": "sql",
+    "devDatabaseType": "postgresql",
+    "prodDatabaseType": "postgresql",
+    "searchEngine": false,
+    "messageBroker": false,
+    "serviceDiscoveryType": false,
+    "buildTool": "maven",
+    "enableSwaggerCodegen": false,
+    "jwtSecretKey": "ODI3ZDU3NmQxOTg0ZTI1OTFmNzE0NmFjMzgyYmY5YjlmYTI4MmY5MjNlY2RhM2Q5MjNkMzRjZWExNmY2ZDA2Mzc5ZDc1OTdiOTNiNDFjNWU1MTZkYTBlYTZlNzY2NmY1MTNkM2E4MDQ4Nzk0YjJhMWM5YjQ0N2Q1YjYzNDYzYzI=",
+    "embeddableLaunchScript": false,
+    "useSass": true,
+    "clientPackageManager": "npm",
+    "skipClient": true,
+    "creationTimestamp": 1608408790162,
+    "testFrameworks": [],
+    "jhiPrefix": "jhi",
+    "entitySuffix": "",
+    "dtoSuffix": "DTO",
+    "otherModules": [],
+    "enableTranslation": false,
+    "blueprints": []
+  }
+}

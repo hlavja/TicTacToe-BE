@@ -1,0 +1,40 @@
+/**
+ * The Friend entity.
+ * @author hlavja
+ */
+entity Friend {
+}
+
+/**
+ * The Game entity.
+ * @author hlavja
+ */
+entity Game {
+    created Instant,
+    gameStatus String,
+    gameType String,
+    result String,
+}
+
+/**
+ * The Move entity.
+ * @author hlavja
+ */
+entity Move {
+    boardX Integer,
+    boardY Integer,
+    created Instant
+}
+
+relationship ManyToOne {
+   Friend{user} to User,
+   Friend{friendWith} to User,
+   Game{firstPlayer} to User,
+   Game{secondPlayer} to User,
+   Game{winningPlayer} to User,
+   Move{player} to User,
+   Move{game} to Game
+}
+
+dto * with mapstruct
+service all with serviceImpl
