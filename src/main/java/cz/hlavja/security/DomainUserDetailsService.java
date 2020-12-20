@@ -2,7 +2,6 @@ package cz.hlavja.security;
 
 import cz.hlavja.domain.User;
 import cz.hlavja.repository.UserRepository;
-import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
@@ -35,17 +34,9 @@ public class DomainUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(final String login) {
         log.debug("Authenticating {}", login);
 
-        if (new EmailValidator().isValid(login, null)) {
-            return userRepository.findOneWithAuthoritiesByEmailIgnoreCase(login)
-                .map(user -> createSpringSecurityUser(login, user))
-                .orElseThrow(() -> new UsernameNotFoundException("User with email " + login + " was not found in the database"));
-        }
-
-        String lowercaseLogin = login.toLowerCase(Locale.ENGLISH);
-        return userRepository.findOneWithAuthoritiesByLogin(lowercaseLogin)
-            .map(user -> createSpringSecurityUser(lowercaseLogin, user))
-            .orElseThrow(() -> new UsernameNotFoundException("User " + lowercaseLogin + " was not found in the database"));
-
+        return userRepository.findOneWithAuthoritiesByEmailIgnoreCase(login)
+            .map(user -> createSpringSecurityUser(login, user))
+            .orElseThrow(() -> new UsernameNotFoundException("User with email " + login + " was not found in the database"));
     }
 
     private org.springframework.security.core.userdetails.User createSpringSecurityUser(String lowercaseLogin, User user) {

@@ -48,27 +48,20 @@ public class LobbyResource {
                 PlayerDTO player = new PlayerDTO();
                 player.setLogin(user.getLogin());
                 // check if online
-                for (String login: onlineUsers) {
-                    if (user.getLogin().equals(login)){
-                        player.setOnline(true);
-                        break;
-                    }
+
+                if (onlineUsers.stream().anyMatch(onlineUser -> user.getLogin().equals(onlineUser))){
+                    player.setOnline(true);
                 }
+
                 if (player.isOnline()){
                     // check if is in game
-                    for (GameDTO game: runningGames) {
-                        if (game.getFirstPlayerId().equals(user.getId()) || game.getSecondPlayerId().equals(user.getId())){
-                            player.setAvailable(false);
-                            break;
-                        }
+                    if (runningGames.stream().anyMatch(game -> game.getFirstPlayerId().equals(user.getId()) || game.getSecondPlayerId().equals(user.getId()))){
+                        player.setAvailable(false);
                     }
                 }
                 // check if is friend
-                for (FriendDTO friend: userFriends){
-                    if(friend.getFriendWithId().equals(user.getId()) || friend.getUserId().equals(user.getId())){
-                        player.setFriend(true);
-                        break;
-                    }
+                if(userFriends.stream().anyMatch(friend -> friend.getFriendWithId().equals(user.getId()) || friend.getUserId().equals(user.getId()))){
+                    player.setFriend(true);
                 }
                 players.add(player);
             }

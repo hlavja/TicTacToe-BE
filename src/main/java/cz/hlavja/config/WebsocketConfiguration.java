@@ -33,12 +33,21 @@ public class WebsocketConfiguration implements WebSocketMessageBrokerConfigurer 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config.enableSimpleBroker("/topic");
+        //moje
+        config.enableSimpleBroker("/secured/user/queue/specific-user");
+        config.setUserDestinationPrefix("/secured/user");
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         String[] allowedOrigins = Optional.ofNullable(jHipsterProperties.getCors().getAllowedOrigins()).map(origins -> origins.toArray(new String[0])).orElse(new String[0]);
         registry.addEndpoint("/websocket/tracker")
+            .setHandshakeHandler(defaultHandshakeHandler())
+            .setAllowedOrigins(allowedOrigins)
+            .withSockJS()
+            .setInterceptors(httpSessionHandshakeInterceptor());
+        //moje
+        registry.addEndpoint("/websocket/lobby")
             .setHandshakeHandler(defaultHandshakeHandler())
             .setAllowedOrigins(allowedOrigins)
             .withSockJS()

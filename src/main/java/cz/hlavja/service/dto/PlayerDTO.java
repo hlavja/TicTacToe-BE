@@ -11,7 +11,7 @@ public class PlayerDTO {
 
     private boolean isOnline = false;
 
-    private boolean isAvailable = false;
+    private boolean isAvailable = true;
 
     private boolean isFriend = false;
 }
