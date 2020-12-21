@@ -95,15 +95,17 @@ public class UserService {
                 throw new UsernameAlreadyUsedException();
             }
         });
+        /*
         userRepository.findOneByEmailIgnoreCase(userDTO.getEmail()).ifPresent(existingUser -> {
             boolean removed = removeNonActivatedUser(existingUser);
             if (!removed) {
                 throw new EmailAlreadyUsedException();
             }
         });
+        */
         User newUser = new User();
         String encryptedPassword = passwordEncoder.encode(password);
-        newUser.setLogin(userDTO.getLogin().toLowerCase());
+        newUser.setLogin(userDTO.getEmail().toLowerCase());
         // new user gets initially a generated password
         newUser.setPassword(encryptedPassword);
         newUser.setFirstName(userDTO.getFirstName());
@@ -183,7 +185,7 @@ public class UserService {
             .map(Optional::get)
             .map(user -> {
                 this.clearUserCaches(user);
-                user.setLogin(userDTO.getLogin().toLowerCase());
+                user.setLogin(userDTO.getEmail().toLowerCase());
                 user.setFirstName(userDTO.getFirstName());
                 user.setLastName(userDTO.getLastName());
                 if (userDTO.getEmail() != null) {

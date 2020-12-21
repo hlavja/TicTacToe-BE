@@ -1,6 +1,9 @@
 package cz.hlavja.service.dto;
 
 import io.swagger.annotations.ApiModel;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.Instant;
 import java.io.Serializable;
 
@@ -8,8 +11,10 @@ import java.io.Serializable;
  * A DTO for the {@link cz.hlavja.domain.Game} entity.
  */
 @ApiModel(description = "The Game entity.\n@author hlavja")
+@Getter
+@Setter
 public class GameDTO implements Serializable {
-    
+
     private Long id;
 
     private Instant created;
@@ -20,13 +25,18 @@ public class GameDTO implements Serializable {
 
     private String result;
 
+    private String winningPlayerLogin;
+
+    private String firstPlayerLogin;
+
+    private String secondPlayerLogin;
 
     private Long firstPlayerId;
 
     private Long secondPlayerId;
 
     private Long winningPlayerId;
-    
+
     public Long getId() {
         return id;
     }

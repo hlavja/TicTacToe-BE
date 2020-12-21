@@ -47,4 +47,8 @@ public interface FriendService {
      * @return lost of froends for given player
      */
     List<FriendDTO> findByUserIdOrFriendWithId(Long userId);
+
+    boolean removeFriend(Long friendId);
+
+    FriendDTO addFriend(String addFriendLogin);
 }

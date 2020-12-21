@@ -1,14 +1,20 @@
 package cz.hlavja.web.rest;
 
+import cz.hlavja.domain.Friend;
 import cz.hlavja.service.FriendService;
+import cz.hlavja.service.UserService;
+import cz.hlavja.service.dto.UserDTO;
 import cz.hlavja.web.rest.errors.BadRequestAlertException;
 import cz.hlavja.service.dto.FriendDTO;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.repository.query.Param;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,7 +39,7 @@ public class FriendResource {
 
     private final FriendService friendService;
 
-    public FriendResource(FriendService friendService) {
+    public FriendResource(FriendService friendService, UserService userService) {
         this.friendService = friendService;
     }
 
@@ -112,5 +118,24 @@ public class FriendResource {
         log.debug("REST request to delete Friend : {}", id);
         friendService.delete(id);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString())).build();
+    }
+
+    @DeleteMapping("/friends/remove-friend")
+    public ResponseEntity<Void> removeFriend(@RequestParam() Long friendId){
+        boolean success = friendService.removeFriend(friendId);
+        //TODO mby send websocket message to trigger refresh friends
+        if (success){
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping("/friends/add-friend")
+    public ResponseEntity<FriendDTO> addFriend(@RequestParam() String addFriendLogin){
+        FriendDTO result = friendService.addFriend(addFriendLogin);
+        return ResponseEntity.ok()
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
+            .body(result);
     }
 }

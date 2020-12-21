@@ -1,5 +1,6 @@
 package cz.hlavja.web.rest;
 
+import cz.hlavja.config.Constants;
 import cz.hlavja.domain.User;
 import cz.hlavja.repository.UserRepository;
 import cz.hlavja.service.FriendService;
@@ -39,7 +40,7 @@ public class LobbyResource {
         List<PlayerDTO> players = new ArrayList<>();
         List<String> onlineUsers = this.simpUserRegistry.getUsers().stream().map(SimpUser::getName).collect(Collectors.toList());
         List<FriendDTO> userFriends = this.friendService.findByUserIdOrFriendWithId(userId);
-        List<GameDTO> runningGames = this.gameService.findByGameStatus("RUNNING");
+        List<GameDTO> runningGames = this.gameService.findByGameStatus(Constants.RUNNING_GAME);
         List<User> users = userRepository.findAll();
 
         for (User user: users) {
@@ -47,6 +48,7 @@ public class LobbyResource {
             if (!user.getId().equals(userId)){
                 PlayerDTO player = new PlayerDTO();
                 player.setLogin(user.getLogin());
+                player.setPlayerId(user.getId());
                 // check if online
 
                 if (onlineUsers.stream().anyMatch(onlineUser -> user.getLogin().equals(onlineUser))){

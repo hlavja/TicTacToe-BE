@@ -1,20 +1,27 @@
 package cz.hlavja.web.websocket;
 
-import cz.hlavja.service.dto.GameMessageDTO;
-import cz.hlavja.web.websocket.dto.ActivityDTO;
+import cz.hlavja.config.Constants;
+import cz.hlavja.repository.UserRepository;
+import cz.hlavja.security.SecurityUtils;
+import cz.hlavja.service.MailService;
+import cz.hlavja.service.UserService;
+import cz.hlavja.service.dto.MessageDTO;
+import cz.hlavja.service.dto.UserDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.Message;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 @Controller
 public class UserSpecific {
@@ -22,6 +29,12 @@ public class UserSpecific {
 
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
+
+    private final UserService userService;
+
+    public UserSpecific(UserService userService) {
+        this.userService = userService;
+    }
 
     /*@MessageMapping("/secured/game")
     public void sendSpecific(@Payload ActivityDTO activityDTO, Principal user, @Header("simpSessionId") String sessionId) throws Exception {
@@ -33,8 +46,8 @@ public class UserSpecific {
     }*/
 
     @MessageMapping("/secured/player-action")
-    public void startGame(@Payload GameMessageDTO gameMessage, Principal user,  @Header("simpSessionId") String sessionId){
-        GameMessageDTO newMessage = new GameMessageDTO();
+    public void startGame(@Payload MessageDTO gameMessage, Principal user, @Header("simpSessionId") String sessionId){
+        MessageDTO newMessage = new MessageDTO();
         newMessage.setMessageType("CREATE_GAME");
         newMessage.setSenderLogin(gameMessage.getSenderLogin());
         newMessage.setOpponentLogin(gameMessage.getOpponentLogin());
@@ -42,11 +55,26 @@ public class UserSpecific {
     }
 
     @GetMapping("/aa")
-    public void startGame2(@Payload GameMessageDTO gameMessage, Principal user,  @Header("simpSessionId") String sessionId){
-        GameMessageDTO newMessage = new GameMessageDTO();
+    public void startGame2(@Payload MessageDTO gameMessage, Principal user, @Header("simpSessionId") String sessionId){
+        MessageDTO newMessage = new MessageDTO();
         newMessage.setMessageType("CREATE_GAME");
         newMessage.setSenderLogin(gameMessage.getSenderLogin());
         newMessage.setOpponentLogin(gameMessage.getOpponentLogin());
         simpMessagingTemplate.convertAndSendToUser("user", "/secured/user/queue/specific-user", newMessage);
+    }
+
+    @GetMapping("/api/friends/ask-friend")
+    public ResponseEntity<Void> askFriend(@RequestParam() String friendLogin){
+        UserDTO loggedUser = userService.getUserWithAuthorities().map(UserDTO::new).orElse(null);
+        if (loggedUser != null){
+            MessageDTO message = new MessageDTO();
+            message.setMessageType(Constants.ADD_FRIEND);
+            message.setSenderLogin(loggedUser.getLogin());
+            message.setOpponentLogin(friendLogin);
+            simpMessagingTemplate.convertAndSendToUser(message.getOpponentLogin(), "/secured/user/queue/specific-user", message);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }

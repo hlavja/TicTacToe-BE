@@ -23,5 +23,5 @@ public interface GameRepository extends JpaRepository<Game, Long> {
     @Query("select game from Game game where game.winningPlayer.login = ?#{principal.username}")
     List<Game> findByWinningPlayerIsCurrentUser();
 
-    List<Game> findByGameStatus(String gameStatus);
+    List<Game> findByGameStatusOrderByCreatedDesc(String gameStatus);
 }

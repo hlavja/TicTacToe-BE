@@ -12,6 +12,13 @@ public final class Constants {
     public static final String DEFAULT_LANGUAGE = "en";
     public static final String ANONYMOUS_USER = "anonymoususer";
 
+    public static final String RUNNING_GAME = "RUNNING";
+    public static final String ENDED_GAME = "ENDED";
+    public static final String WON_GAME = "WON";
+    public static final String DRAFT_GAME = "DRAFT";
+
+    public static final String ADD_FRIEND = "ADD_FRIEND";
+
     private Constants() {
     }
 }

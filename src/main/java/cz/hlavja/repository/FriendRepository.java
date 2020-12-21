@@ -5,6 +5,7 @@ import cz.hlavja.domain.Friend;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,4 +23,8 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
     List<Friend> findByFriendWithIsCurrentUser();
 
     List<Friend> findByUserIdOrFriendWithId(Long userId, Long userId2);
+
+    @Modifying
+    @Query("delete from Friend friend where friend.user.id in (?1, ?2) and friend.friendWith.id in (?1, ?2)")
+    void deleteFriend(Long id, Long friendId);
 }

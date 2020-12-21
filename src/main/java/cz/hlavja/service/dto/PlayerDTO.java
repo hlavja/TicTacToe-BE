@@ -9,6 +9,8 @@ public class PlayerDTO {
 
     private String login;
 
+    private Long playerId;
+
     private boolean isOnline = false;
 
     private boolean isAvailable = true;

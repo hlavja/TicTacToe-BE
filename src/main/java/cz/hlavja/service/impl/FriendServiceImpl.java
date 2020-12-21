@@ -3,7 +3,9 @@ package cz.hlavja.service.impl;
 import cz.hlavja.service.FriendService;
 import cz.hlavja.domain.Friend;
 import cz.hlavja.repository.FriendRepository;
+import cz.hlavja.service.UserService;
 import cz.hlavja.service.dto.FriendDTO;
+import cz.hlavja.service.dto.UserDTO;
 import cz.hlavja.service.mapper.FriendMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,9 +31,12 @@ public class FriendServiceImpl implements FriendService {
 
     private final FriendMapper friendMapper;
 
-    public FriendServiceImpl(FriendRepository friendRepository, FriendMapper friendMapper) {
+    private final UserService userService;
+
+    public FriendServiceImpl(FriendRepository friendRepository, FriendMapper friendMapper, UserService userService) {
         this.friendRepository = friendRepository;
         this.friendMapper = friendMapper;
+        this.userService = userService;
     }
 
     @Override
@@ -73,5 +78,34 @@ public class FriendServiceImpl implements FriendService {
     public void delete(Long id) {
         log.debug("Request to delete Friend : {}", id);
         friendRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public boolean removeFriend(Long friendId){
+        UserDTO loggedUser = userService.getUserWithAuthorities().map(UserDTO::new).orElse(null);
+        if (loggedUser != null){
+            friendRepository.deleteFriend(loggedUser.getId(), friendId);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public FriendDTO addFriend(String addFriendLogin){
+        Optional<UserDTO> loggedUser = userService.getUserWithAuthorities().map(UserDTO::new);
+        Optional<UserDTO> newFriend = userService.getUserWithAuthoritiesByLogin(addFriendLogin).map(UserDTO::new);
+        if( loggedUser.isPresent() && newFriend.isPresent()){
+            FriendDTO newFriendship = new FriendDTO();
+            newFriendship.setUserId(newFriend.get().getId());
+            newFriendship.setFriendWithId(loggedUser.get().getId());
+
+            Friend friend = friendMapper.toEntity(newFriendship);
+            friend = friendRepository.save(friend);
+            return friendMapper.toDto(friend);
+        } else {
+            return null;
+        }
     }
 }

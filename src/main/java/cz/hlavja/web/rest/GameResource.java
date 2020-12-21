@@ -1,5 +1,6 @@
 package cz.hlavja.web.rest;
 
+import cz.hlavja.config.Constants;
 import cz.hlavja.service.GameService;
 import cz.hlavja.web.rest.errors.BadRequestAlertException;
 import cz.hlavja.service.dto.GameDTO;
@@ -85,7 +86,7 @@ public class GameResource {
     @GetMapping("/games")
     public List<GameDTO> getAllGames() {
         log.debug("REST request to get all Games");
-        return gameService.findAll();
+        return gameService.findByGameStatus(Constants.ENDED_GAME);
     }
 
     /**
