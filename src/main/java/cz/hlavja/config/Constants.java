@@ -18,6 +18,8 @@ public final class Constants {
     public static final String DRAFT_GAME = "DRAFT";
 
     public static final String ADD_FRIEND = "ADD_FRIEND";
+    public static final String GAME_CHALLENGE = "GAME_CHALLENGE";
+    public static final String GAME_ACCEPTED = "GAME_ACCEPTED";
 
     private Constants() {
     }

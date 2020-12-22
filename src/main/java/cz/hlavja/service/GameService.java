@@ -1,6 +1,7 @@
 package cz.hlavja.service;
 
 import cz.hlavja.service.dto.GameDTO;
+import cz.hlavja.service.dto.MessageDTO;
 
 import java.util.List;
 import java.util.Optional;
@@ -48,4 +49,18 @@ public interface GameService {
      * @return the list of entities
      */
     List<GameDTO> findByGameStatus(String gameStatus);
+
+    /**
+     *
+     * @param opponentLogin login of challenged player
+     * @return message to send to opponent
+     */
+    MessageDTO challengeGame(String opponentLogin);
+
+    /**
+     *
+     * @param opponentLogin login of accepted player invitaion
+     * @return message to send to opponent
+     */
+    MessageDTO acceptGame(String opponentLogin);
 }

@@ -2,6 +2,7 @@ package cz.hlavja.web.rest;
 
 import cz.hlavja.config.Constants;
 import cz.hlavja.service.GameService;
+import cz.hlavja.service.dto.MessageDTO;
 import cz.hlavja.web.rest.errors.BadRequestAlertException;
 import cz.hlavja.service.dto.GameDTO;
 
@@ -10,7 +11,9 @@ import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -25,6 +28,8 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class GameResource {
 
+    private final SimpMessagingTemplate simpMessagingTemplate;
+
     private final Logger log = LoggerFactory.getLogger(GameResource.class);
 
     private static final String ENTITY_NAME = "game";
@@ -34,8 +39,9 @@ public class GameResource {
 
     private final GameService gameService;
 
-    public GameResource(GameService gameService) {
+    public GameResource(GameService gameService, SimpMessagingTemplate simpMessagingTemplate) {
         this.gameService = gameService;
+        this.simpMessagingTemplate = simpMessagingTemplate;
     }
 
     /**
@@ -64,10 +70,9 @@ public class GameResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated gameDTO,
      * or with status {@code 400 (Bad Request)} if the gameDTO is not valid,
      * or with status {@code 500 (Internal Server Error)} if the gameDTO couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/games")
-    public ResponseEntity<GameDTO> updateGame(@RequestBody GameDTO gameDTO) throws URISyntaxException {
+    public ResponseEntity<GameDTO> updateGame(@RequestBody GameDTO gameDTO) {
         log.debug("REST request to update Game : {}", gameDTO);
         if (gameDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
@@ -113,5 +118,39 @@ public class GameResource {
         log.debug("REST request to delete Game : {}", id);
         gameService.delete(id);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString())).build();
+    }
+
+    /**
+     * {@code GET  /games/challenge} : challenge opponent to the game
+     *
+     * @param opponentLogin login of opponent to challenge
+     * @return status code
+     */
+    @GetMapping("/games/challenge")
+    public ResponseEntity<Void> challengeGame(@RequestParam() String opponentLogin) {
+        MessageDTO message =  gameService.challengeGame(opponentLogin);
+        if (message != null){
+            simpMessagingTemplate.convertAndSendToUser(opponentLogin, "/secured/user/queue/specific-user", message);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    /**
+     * {@code GET  /games/accept} : accept game challenge
+     *
+     * @param opponentLogin login of opponent in accepted game
+     * @return status code
+     */
+    @GetMapping("/games/accept")
+    public ResponseEntity<MessageDTO> acceptGame(@RequestParam() String opponentLogin) {
+        MessageDTO message = gameService.acceptGame(opponentLogin);
+        if (message != null){
+            simpMessagingTemplate.convertAndSendToUser(message.getOpponentLogin(), "/secured/user/queue/specific-user", message);
+            return ResponseEntity.ok().body(message);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }

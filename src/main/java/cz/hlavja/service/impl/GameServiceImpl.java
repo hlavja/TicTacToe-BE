@@ -1,13 +1,19 @@
 package cz.hlavja.service.impl;
 
+import cz.hlavja.config.Constants;
 import cz.hlavja.service.GameService;
 import cz.hlavja.domain.Game;
 import cz.hlavja.repository.GameRepository;
+import cz.hlavja.service.UserService;
 import cz.hlavja.service.dto.GameDTO;
+import cz.hlavja.service.dto.MessageDTO;
+import cz.hlavja.service.dto.UserDTO;
 import cz.hlavja.service.mapper.GameMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,9 +35,12 @@ public class GameServiceImpl implements GameService {
 
     private final GameMapper gameMapper;
 
-    public GameServiceImpl(GameRepository gameRepository, GameMapper gameMapper) {
+    private final UserService userService;
+
+    public GameServiceImpl(GameRepository gameRepository, GameMapper gameMapper, UserService userService) {
         this.gameRepository = gameRepository;
         this.gameMapper = gameMapper;
+        this.userService = userService;
     }
 
     @Override
@@ -73,5 +82,35 @@ public class GameServiceImpl implements GameService {
     public void delete(Long id) {
         log.debug("Request to delete Game : {}", id);
         gameRepository.deleteById(id);
+    }
+
+    @Override
+    public MessageDTO challengeGame(String opponentLogin){
+        UserDTO loggedUser = userService.getUserWithAuthorities().map(UserDTO::new).orElse(null);
+        if (loggedUser != null){
+            MessageDTO message = new MessageDTO();
+            message.setMessageType(Constants.GAME_CHALLENGE);
+            message.setSenderLogin(loggedUser.getLogin());
+            message.setOpponentLogin(opponentLogin);
+            return message;
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public MessageDTO acceptGame(String opponentLogin){
+        UserDTO loggedUser = userService.getUserWithAuthorities().map(UserDTO::new).orElse(null);
+        if (loggedUser != null){
+            //TODO create game record to DB!!
+            //TODO improve message (add game info)
+            MessageDTO message = new MessageDTO();
+            message.setMessageType(Constants.GAME_ACCEPTED);
+            message.setSenderLogin(loggedUser.getLogin());
+            message.setOpponentLogin(opponentLogin);
+            return message;
+        } else {
+            return null;
+        }
     }
 }
