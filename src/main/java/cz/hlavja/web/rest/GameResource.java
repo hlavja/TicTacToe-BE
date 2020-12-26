@@ -176,11 +176,30 @@ public class GameResource {
         }
     }
 
+    /**
+     *
+     * @param id
+     * @param move
+     * @return
+     * @throws URISyntaxException
+     */
     @PostMapping("games/{id}/move")
     public ResponseEntity<MoveDTO> addMove(@PathVariable Long id, @RequestBody MoveDTO move) throws URISyntaxException {
         MoveDTO savedMove = gameService.move(id, move);
         return ResponseEntity.created(new URI("/api/moves/" + savedMove.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, savedMove.getId().toString()))
             .body(savedMove);
+    }
+
+    /**
+     *
+     * @param id
+     * @return
+     */
+    @PostMapping("games/{id}/give-up")
+    public ResponseEntity<Void> giveUp(@PathVariable Long id){
+
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
