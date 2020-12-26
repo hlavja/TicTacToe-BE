@@ -2,6 +2,8 @@ package cz.hlavja.service;
 
 import cz.hlavja.service.dto.GameDTO;
 import cz.hlavja.service.dto.MessageDTO;
+import cz.hlavja.service.dto.MoveDTO;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -63,4 +65,20 @@ public interface GameService {
      * @return message to send to opponent
      */
     MessageDTO acceptGame(String opponentLogin);
+
+    /**
+     *
+     * @param opponentLogin login of opponent
+     * @return prepared game in DB
+     */
+    GameDTO prepareGame(String opponentLogin);
+
+    /**
+     *
+     * @param opponentLogin
+     * @return
+     */
+    MessageDTO rejectGame(String opponentLogin);
+
+    MoveDTO move(Long id, MoveDTO move);
 }

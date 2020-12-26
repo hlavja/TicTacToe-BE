@@ -17,6 +17,8 @@ public class MessageDTO {
 
     private String opponentLogin;
 
+    private GameDTO game;
+
     public String getSenderLogin() {
         return senderLogin;
     }
@@ -48,6 +50,15 @@ public class MessageDTO {
             "senderLogin='" + senderLogin + '\'' +
             ", opponentLogin='" + opponentLogin + '\'' +
             ", messageType='" + messageType + '\'' +
+            ", game='" + game.toString() + '\'' +
             "}";
+    }
+
+    public GameDTO getGame() {
+        return game;
+    }
+
+    public void setGame(GameDTO game) {
+        this.game = game;
     }
 }

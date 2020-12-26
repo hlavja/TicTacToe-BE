@@ -3,6 +3,7 @@ package cz.hlavja.web.rest;
 import cz.hlavja.config.Constants;
 import cz.hlavja.service.GameService;
 import cz.hlavja.service.dto.MessageDTO;
+import cz.hlavja.service.dto.MoveDTO;
 import cz.hlavja.web.rest.errors.BadRequestAlertException;
 import cz.hlavja.service.dto.GameDTO;
 
@@ -144,13 +145,42 @@ public class GameResource {
      * @return status code
      */
     @GetMapping("/games/accept")
-    public ResponseEntity<MessageDTO> acceptGame(@RequestParam() String opponentLogin) {
+    public ResponseEntity<GameDTO> acceptGame(@RequestParam() String opponentLogin) throws URISyntaxException {
         MessageDTO message = gameService.acceptGame(opponentLogin);
+        GameDTO preparedGame = gameService.prepareGame(opponentLogin);
+        if (message != null && preparedGame != null){
+            message.setGame(preparedGame);
+            simpMessagingTemplate.convertAndSendToUser(message.getOpponentLogin(), "/secured/user/queue/specific-user", message);
+            return ResponseEntity.created(new URI("/api/games/" + preparedGame.getId()))
+                .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, preparedGame.getId().toString()))
+                .body(preparedGame);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    /**
+     * {@code GET  /games/reject} : reject game challenge
+     *
+     * @param opponentLogin login of opponent in rejected game
+     * @return message
+     */
+    @GetMapping("/games/reject")
+    public ResponseEntity<MessageDTO> rejectGame(@RequestParam() String opponentLogin){
+        MessageDTO message = gameService.rejectGame(opponentLogin);
         if (message != null){
             simpMessagingTemplate.convertAndSendToUser(message.getOpponentLogin(), "/secured/user/queue/specific-user", message);
             return ResponseEntity.ok().body(message);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @PostMapping("games/{id}/move")
+    public ResponseEntity<MoveDTO> addMove(@PathVariable Long id, @RequestBody MoveDTO move) throws URISyntaxException {
+        MoveDTO savedMove = gameService.move(id, move);
+        return ResponseEntity.created(new URI("/api/moves/" + savedMove.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, savedMove.getId().toString()))
+            .body(savedMove);
     }
 }

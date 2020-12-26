@@ -12,6 +12,8 @@ public final class Constants {
     public static final String DEFAULT_LANGUAGE = "en";
     public static final String ANONYMOUS_USER = "anonymoususer";
 
+    public static final String STANDARD_GAME = "STANDARD_GAME";
+
     public static final String RUNNING_GAME = "RUNNING";
     public static final String ENDED_GAME = "ENDED";
     public static final String WON_GAME = "WON";
@@ -20,6 +22,7 @@ public final class Constants {
     public static final String ADD_FRIEND = "ADD_FRIEND";
     public static final String GAME_CHALLENGE = "GAME_CHALLENGE";
     public static final String GAME_ACCEPTED = "GAME_ACCEPTED";
+    public static final String GAME_REJECTED = "GAME_REJECTED";
 
     private Constants() {
     }

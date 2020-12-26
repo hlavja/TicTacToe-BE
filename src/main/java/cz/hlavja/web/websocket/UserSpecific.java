@@ -1,13 +1,9 @@
 package cz.hlavja.web.websocket;
 
 import cz.hlavja.config.Constants;
-import cz.hlavja.repository.UserRepository;
-import cz.hlavja.security.SecurityUtils;
-import cz.hlavja.service.MailService;
 import cz.hlavja.service.UserService;
 import cz.hlavja.service.dto.MessageDTO;
 import cz.hlavja.service.dto.UserDTO;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +13,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
 
