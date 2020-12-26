@@ -37,6 +37,8 @@ public class GameDTO implements Serializable {
 
     private Long winningPlayerId;
 
+    private Long turnUserId;
+
     public Long getId() {
         return id;
     }
@@ -101,6 +103,14 @@ public class GameDTO implements Serializable {
         this.winningPlayerId = userId;
     }
 
+    public Long getTurnUserId() {
+        return turnUserId;
+    }
+
+    public void setTurnUserId(Long userId) {
+        this.turnUserId = userId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -130,6 +140,7 @@ public class GameDTO implements Serializable {
             ", firstPlayerId=" + getFirstPlayerId() +
             ", secondPlayerId=" + getSecondPlayerId() +
             ", winningPlayerId=" + getWinningPlayerId() +
+            ", turnUserId=" + getTurnUserId() +
             "}";
     }
 }

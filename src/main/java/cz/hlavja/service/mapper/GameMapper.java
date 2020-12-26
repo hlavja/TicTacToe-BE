@@ -23,6 +23,7 @@ public interface GameMapper extends EntityMapper<GameDTO, Game> {
     @Mapping(source = "firstPlayerId", target = "firstPlayer")
     @Mapping(source = "secondPlayerId", target = "secondPlayer")
     @Mapping(source = "winningPlayerId", target = "winningPlayer")
+    @Mapping(source = "turnUserId", target = "turnUser")
     Game toEntity(GameDTO gameDTO);
 
     default Game fromId(Long id) {

@@ -36,6 +36,9 @@
             <column name="winning_player_id" type="bigint">
                 <constraints nullable="true" />
             </column>
+            <column name="turn_user_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
         <dropDefaultValue tableName="game" columnName="created" columnDataType="datetime"/>

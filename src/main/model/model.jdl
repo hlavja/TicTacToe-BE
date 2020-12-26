@@ -32,6 +32,7 @@ relationship ManyToOne {
    Game{firstPlayer} to User,
    Game{secondPlayer} to User,
    Game{winningPlayer} to User,
+   Game{turnUser} to User,
    Move{player} to User,
    Move{game} to Game
 }

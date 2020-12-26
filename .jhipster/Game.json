@@ -39,6 +39,13 @@
       "otherEntityRelationshipName": "game",
       "relationshipName": "winningPlayer",
       "otherEntityField": "id"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "game",
+      "relationshipName": "turnUser",
+      "otherEntityField": "id"
     }
   ],
   "changelogDate": "20201219201806",
