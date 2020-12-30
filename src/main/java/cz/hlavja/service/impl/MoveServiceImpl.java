@@ -51,6 +51,14 @@ public class MoveServiceImpl implements MoveService {
             .collect(Collectors.toCollection(LinkedList::new));
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<MoveDTO> findMovesInGame(Long id) {
+        return moveRepository.findByGameId(id).stream()
+            .map(moveMapper::toDto)
+            .collect(Collectors.toCollection(LinkedList::new));
+    }
+
 
     @Override
     @Transactional(readOnly = true)

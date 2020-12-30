@@ -39,6 +39,8 @@ public class GameDTO implements Serializable {
 
     private Long turnUserId;
 
+    private String turnUserLogin;
+
     public Long getId() {
         return id;
     }
@@ -126,21 +128,5 @@ public class GameDTO implements Serializable {
     @Override
     public int hashCode() {
         return 31;
-    }
-
-    // prettier-ignore
-    @Override
-    public String toString() {
-        return "GameDTO{" +
-            "id=" + getId() +
-            ", created='" + getCreated() + "'" +
-            ", gameStatus='" + getGameStatus() + "'" +
-            ", gameType='" + getGameType() + "'" +
-            ", result='" + getResult() + "'" +
-            ", firstPlayerId=" + getFirstPlayerId() +
-            ", secondPlayerId=" + getSecondPlayerId() +
-            ", winningPlayerId=" + getWinningPlayerId() +
-            ", turnUserId=" + getTurnUserId() +
-            "}";
     }
 }

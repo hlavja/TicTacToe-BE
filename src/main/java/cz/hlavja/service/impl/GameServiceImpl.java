@@ -6,6 +6,7 @@ import cz.hlavja.repository.UserRepository;
 import cz.hlavja.service.GameService;
 import cz.hlavja.domain.Game;
 import cz.hlavja.repository.GameRepository;
+import cz.hlavja.service.MoveService;
 import cz.hlavja.service.UserService;
 import cz.hlavja.service.dto.GameDTO;
 import cz.hlavja.service.dto.MessageDTO;
@@ -15,16 +16,11 @@ import cz.hlavja.service.mapper.GameMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Time;
 import java.time.Instant;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -44,11 +40,14 @@ public class GameServiceImpl implements GameService {
 
     private final UserRepository userRepository;
 
-    public GameServiceImpl(GameRepository gameRepository, GameMapper gameMapper, UserService userService, UserRepository userRepository) {
+    private final MoveService moveService;
+
+    public GameServiceImpl(GameRepository gameRepository, GameMapper gameMapper, UserService userService, UserRepository userRepository, MoveService moveService) {
         this.gameRepository = gameRepository;
         this.gameMapper = gameMapper;
         this.userService = userService;
         this.userRepository = userRepository;
+        this.moveService = moveService;
     }
 
     @Override
@@ -121,7 +120,6 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    @Transactional
     public GameDTO prepareGame(String opponentLogin){
         Optional<User> opponent = userRepository.findOneByLogin(opponentLogin);
         UserDTO loggedUser = userService.getUserWithAuthorities().map(UserDTO::new).orElse(null);
@@ -132,6 +130,12 @@ public class GameServiceImpl implements GameService {
             newGame.setSecondPlayerId(loggedUser.getId());
             newGame.setGameStatus(Constants.RUNNING_GAME);
             newGame.setGameType(Constants.STANDARD_GAME);
+            Random random = new Random();
+            if (random.nextBoolean()){
+                newGame.setTurnUserId(newGame.getFirstPlayerId());
+            } else {
+                newGame.setTurnUserId(newGame.getSecondPlayerId());
+            }
             return save(newGame);
         } else {
             return null;
@@ -153,11 +157,60 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public MoveDTO move(Long id, MoveDTO move){
-        //TODO check if player is in game
-        //TODO check if player is on turn
-        //TODO check if can place move
+    public MessageDTO move(Long id, MoveDTO move){
+        // move out of board
+        if (move.getBoardY() > 3 || move.getBoardX() > 3){
+            return null;
+        }
+        Optional<GameDTO> game = gameRepository.findById(id).map(gameMapper::toDto);
+        //check if game exists
+        if (!game.isPresent()){
+            return null;
+        }
+        GameDTO actualGame = game.get();
+        UserDTO loggedUser = userService.getUserWithAuthorities().map(UserDTO::new).orElse(null);
+        if (loggedUser == null) {
+            return null;
+        }
+        // user is in game
+        if (actualGame.getFirstPlayerId().equals(loggedUser.getId()) || actualGame.getSecondPlayerId().equals(loggedUser.getId())){
+            // user is on turn
+            if (actualGame.getTurnUserId().equals(loggedUser.getId())){
+                List<MoveDTO> gameMoves = moveService.findMovesInGame(id);
+                // check if move can be placed
+                if (gameMoves.stream().anyMatch(m -> m.getBoardX().equals(move.getBoardX()) && m.getBoardY().equals(move.getBoardY()))){
+                    return null;
+                }
+                MoveDTO newMove = moveService.save(move);
+                gameMoves.add(newMove);
+                return checkGameState(gameMoves.stream().filter(m -> m.getPlayerId().equals(loggedUser.getId())).collect(Collectors.toList()), actualGame, newMove, loggedUser);
+            }
+        }
         //TODO check state of game (won, tie, next turn)
-        return new MoveDTO();
+        return null;
+    }
+
+    private MessageDTO checkGameState(List<MoveDTO> gameMoves, GameDTO actualGame, MoveDTO newMove, UserDTO loggedUser) {
+        MessageDTO message = new MessageDTO();
+        message.setMessageType(Constants.ADD_MOVE);
+        message.setSenderLogin(loggedUser.getLogin());
+        if (actualGame.getFirstPlayerId().equals(loggedUser.getId())){
+            message.setOpponentLogin(actualGame.getSecondPlayerLogin());
+        } else {
+            message.setOpponentLogin(actualGame.getFirstPlayerLogin());
+        }
+        actualGame = setTurnToNextPlayer(actualGame);
+        message.setNewMove(newMove);
+        message.setGame(actualGame);
+        return message;
+    }
+
+    private GameDTO setTurnToNextPlayer(GameDTO actualGame) {
+        if (actualGame.getTurnUserId().equals(actualGame.getFirstPlayerId())){
+            actualGame.setTurnUserId(actualGame.getSecondPlayerId());
+        } else {
+            actualGame.setTurnUserId(actualGame.getFirstPlayerId());
+        }
+        return save(actualGame);
     }
 }

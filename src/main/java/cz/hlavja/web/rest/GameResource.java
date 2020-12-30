@@ -148,6 +148,7 @@ public class GameResource {
     public ResponseEntity<GameDTO> acceptGame(@RequestParam() String opponentLogin) throws URISyntaxException {
         MessageDTO message = gameService.acceptGame(opponentLogin);
         GameDTO preparedGame = gameService.prepareGame(opponentLogin);
+        preparedGame = gameService.findOne(preparedGame.getId()).orElse(null);
         if (message != null && preparedGame != null){
             message.setGame(preparedGame);
             simpMessagingTemplate.convertAndSendToUser(message.getOpponentLogin(), "/secured/user/queue/specific-user", message);
@@ -184,11 +185,14 @@ public class GameResource {
      * @throws URISyntaxException
      */
     @PostMapping("games/{id}/move")
-    public ResponseEntity<MoveDTO> addMove(@PathVariable Long id, @RequestBody MoveDTO move) throws URISyntaxException {
-        MoveDTO savedMove = gameService.move(id, move);
-        return ResponseEntity.created(new URI("/api/moves/" + savedMove.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, savedMove.getId().toString()))
-            .body(savedMove);
+    public ResponseEntity<MessageDTO> addMove(@PathVariable Long id, @RequestBody MoveDTO move) throws URISyntaxException {
+        MessageDTO message = gameService.move(id, move);
+        if (message != null){
+            simpMessagingTemplate.convertAndSendToUser(message.getOpponentLogin(), "/secured/user/queue/specific-user", message);
+            return ResponseEntity.ok().body(message);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     /**

@@ -23,6 +23,7 @@ public final class Constants {
     public static final String GAME_CHALLENGE = "GAME_CHALLENGE";
     public static final String GAME_ACCEPTED = "GAME_ACCEPTED";
     public static final String GAME_REJECTED = "GAME_REJECTED";
+    public static final String ADD_MOVE = "ADD_MOVE";
 
     private Constants() {
     }

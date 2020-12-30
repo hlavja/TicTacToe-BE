@@ -19,6 +19,8 @@ public class MessageDTO {
 
     private GameDTO game;
 
+    private MoveDTO newMove;
+
     public String getSenderLogin() {
         return senderLogin;
     }
@@ -43,22 +45,19 @@ public class MessageDTO {
         this.opponentLogin = opponentLogin;
     }
 
-    // prettier-ignore
-    @Override
-    public String toString() {
-        return "MessageDTO{" +
-            "senderLogin='" + senderLogin + '\'' +
-            ", opponentLogin='" + opponentLogin + '\'' +
-            ", messageType='" + messageType + '\'' +
-            ", game='" + game.toString() + '\'' +
-            "}";
-    }
-
     public GameDTO getGame() {
         return game;
     }
 
     public void setGame(GameDTO game) {
         this.game = game;
+    }
+
+    public MoveDTO getNewMove() {
+        return newMove;
+    }
+
+    public void setNewMove(MoveDTO newMove) {
+        this.newMove = newMove;
     }
 }
