@@ -4,7 +4,6 @@ import cz.hlavja.config.Constants;
 import cz.hlavja.service.GameService;
 import cz.hlavja.service.dto.MessageDTO;
 import cz.hlavja.service.dto.MoveDTO;
-import cz.hlavja.web.rest.errors.BadRequestAlertException;
 import cz.hlavja.service.dto.GameDTO;
 
 import io.github.jhipster.web.util.HeaderUtil;
@@ -45,44 +44,6 @@ public class GameResource {
         this.simpMessagingTemplate = simpMessagingTemplate;
     }
 
-    /**
-     * {@code POST  /games} : Create a new game.
-     *
-     * @param gameDTO the gameDTO to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new gameDTO, or with status {@code 400 (Bad Request)} if the game has already an ID.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
-    @PostMapping("/games")
-    public ResponseEntity<GameDTO> createGame(@RequestBody GameDTO gameDTO) throws URISyntaxException {
-        log.debug("REST request to save Game : {}", gameDTO);
-        if (gameDTO.getId() != null) {
-            throw new BadRequestAlertException("A new game cannot already have an ID", ENTITY_NAME, "idexists");
-        }
-        GameDTO result = gameService.save(gameDTO);
-        return ResponseEntity.created(new URI("/api/games/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
-            .body(result);
-    }
-
-    /**
-     * {@code PUT  /games} : Updates an existing game.
-     *
-     * @param gameDTO the gameDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated gameDTO,
-     * or with status {@code 400 (Bad Request)} if the gameDTO is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the gameDTO couldn't be updated.
-     */
-    @PutMapping("/games")
-    public ResponseEntity<GameDTO> updateGame(@RequestBody GameDTO gameDTO) {
-        log.debug("REST request to update Game : {}", gameDTO);
-        if (gameDTO.getId() == null) {
-            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
-        }
-        GameDTO result = gameService.save(gameDTO);
-        return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, gameDTO.getId().toString()))
-            .body(result);
-    }
 
     /**
      * {@code GET  /games} : get all the games.
@@ -106,19 +67,6 @@ public class GameResource {
         log.debug("REST request to get Game : {}", id);
         Optional<GameDTO> gameDTO = gameService.findOne(id);
         return ResponseUtil.wrapOrNotFound(gameDTO);
-    }
-
-    /**
-     * {@code DELETE  /games/:id} : delete the "id" game.
-     *
-     * @param id the id of the gameDTO to delete.
-     * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
-     */
-    @DeleteMapping("/games/{id}")
-    public ResponseEntity<Void> deleteGame(@PathVariable Long id) {
-        log.debug("REST request to delete Game : {}", id);
-        gameService.delete(id);
-        return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString())).build();
     }
 
     /**
