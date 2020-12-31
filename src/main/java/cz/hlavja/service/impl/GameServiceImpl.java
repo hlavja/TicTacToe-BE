@@ -188,7 +188,7 @@ public class GameServiceImpl implements GameService {
                 // check if player won
                 checkGameState(gameMoves.stream().filter(m -> m.getPlayerId().equals(loggedUser.getId())).collect(Collectors.toList()), actualGame, newMove, loggedUser);
                 // board is full and no one won
-                if (gameMoves.size() == 9 && actualGame.getGameStatus().equals(Constants.RUNNING_GAME)){
+                if (gameMoves.size() == (Constants.BOARD_SIZE * Constants.BOARD_SIZE) && actualGame.getGameStatus().equals(Constants.RUNNING_GAME)){
                     actualGame.setGameStatus(Constants.ENDED_GAME);
                     actualGame.setResult(Constants.DRAFT_GAME);
                     save(actualGame);
@@ -196,7 +196,6 @@ public class GameServiceImpl implements GameService {
                 return createMessage(loggedUser, actualGame, Constants.ADD_MOVE, newMove);
             }
         }
-        //TODO check state of game (won, tie, next turn)
         return null;
     }
 
