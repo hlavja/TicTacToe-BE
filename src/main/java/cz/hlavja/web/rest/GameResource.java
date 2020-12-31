@@ -178,14 +178,14 @@ public class GameResource {
     }
 
     /**
+     * {@code POST  /games/{id}/move} : Create a new move to the game.
      *
-     * @param id
-     * @param move
-     * @return
-     * @throws URISyntaxException
+     * @param id of game
+     * @param move placed move
+     * @return message with updated game status
      */
     @PostMapping("games/{id}/move")
-    public ResponseEntity<MessageDTO> addMove(@PathVariable Long id, @RequestBody MoveDTO move) throws URISyntaxException {
+    public ResponseEntity<MessageDTO> addMove(@PathVariable Long id, @RequestBody MoveDTO move) {
         MessageDTO message = gameService.move(id, move);
         if (message != null){
             simpMessagingTemplate.convertAndSendToUser(message.getOpponentLogin(), "/secured/user/queue/specific-user", message);
@@ -196,9 +196,10 @@ public class GameResource {
     }
 
     /**
+     *  {@code POST  /games/{id}/give-up} : Give up game.
      *
-     * @param id
-     * @return
+     * @param id of game
+     * @return HttpStatus
      */
     @PostMapping("games/{id}/give-up")
     public ResponseEntity<Void> giveUp(@PathVariable Long id){
