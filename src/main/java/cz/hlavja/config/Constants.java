@@ -26,7 +26,7 @@ public final class Constants {
     public static final String ADD_MOVE = "ADD_MOVE";
     public static final String GIVE_UP = "GIVE_UP";
 
-    public static final int BOARD_SIZE = 5;
+    public static final int BOARD_SIZE = 3;
 
     private Constants() {
     }
