@@ -47,12 +47,14 @@ public interface GameService {
 
     /**
      * Return all games by game status
+     *
      * @param gameStatus status of game
      * @return the list of entities
      */
     List<GameDTO> findByGameStatus(String gameStatus);
 
     /**
+     * Challenge player to game
      *
      * @param opponentLogin login of challenged player
      * @return message to send to opponent
@@ -60,13 +62,15 @@ public interface GameService {
     MessageDTO challengeGame(String opponentLogin);
 
     /**
+     * Accept challenged game.
      *
-     * @param opponentLogin login of accepted player invitaion
+     * @param opponentLogin login of accepted player invitation
      * @return message to send to opponent
      */
     MessageDTO acceptGame(String opponentLogin);
 
     /**
+     *  Create new game.
      *
      * @param opponentLogin login of opponent
      * @return prepared game in DB
@@ -74,13 +78,27 @@ public interface GameService {
     GameDTO prepareGame(String opponentLogin);
 
     /**
+     * Reject game invitation.
      *
-     * @param opponentLogin
-     * @return
+     * @param opponentLogin login of oponent
+     * @return message to sent to opponent
      */
     MessageDTO rejectGame(String opponentLogin);
 
+    /**
+     * Create new move to game.
+     *
+     * @param id of game
+     * @param move newly placed move
+     * @return message with game state
+     */
     MessageDTO move(Long id, MoveDTO move);
 
+    /**
+     * Give up in game.
+     *
+     * @param id of game
+     * @return message for opponent
+     */
     MessageDTO giveUp(Long id);
 }
