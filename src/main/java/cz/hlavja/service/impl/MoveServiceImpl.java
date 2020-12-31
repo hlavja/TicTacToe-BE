@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -42,14 +41,6 @@ public class MoveServiceImpl implements MoveService {
         return moveMapper.toDto(move);
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<MoveDTO> findAll() {
-        log.debug("Request to get all Moves");
-        return moveRepository.findAll().stream()
-            .map(moveMapper::toDto)
-            .collect(Collectors.toCollection(LinkedList::new));
-    }
 
     @Override
     @Transactional(readOnly = true)
@@ -57,15 +48,6 @@ public class MoveServiceImpl implements MoveService {
         return moveRepository.findByGameId(id).stream()
             .map(moveMapper::toDto)
             .collect(Collectors.toCollection(LinkedList::new));
-    }
-
-
-    @Override
-    @Transactional(readOnly = true)
-    public Optional<MoveDTO> findOne(Long id) {
-        log.debug("Request to get Move : {}", id);
-        return moveRepository.findById(id)
-            .map(moveMapper::toDto);
     }
 
     @Override

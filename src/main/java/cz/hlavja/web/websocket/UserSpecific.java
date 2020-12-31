@@ -20,7 +20,6 @@ import java.security.Principal;
 @Controller
 public class UserSpecific {
 
-
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
 
@@ -28,33 +27,6 @@ public class UserSpecific {
 
     public UserSpecific(UserService userService) {
         this.userService = userService;
-    }
-
-    /*@MessageMapping("/secured/game")
-    public void sendSpecific(@Payload ActivityDTO activityDTO, Principal user, @Header("simpSessionId") String sessionId) throws Exception {
-        OutputMessage out = new OutputMessage(
-            msg.getFrom(),
-            msg.getText(),
-            new SimpleDateFormat("HH:mm").format(new Date()));
-        simpMessagingTemplate.convertAndSendToUser(msg.getTo(), "/secured/user/queue/specific-user", out);
-    }*/
-
-    @MessageMapping("/secured/player-action")
-    public void startGame(@Payload MessageDTO gameMessage, Principal user, @Header("simpSessionId") String sessionId){
-        MessageDTO newMessage = new MessageDTO();
-        newMessage.setMessageType("CREATE_GAME");
-        newMessage.setSenderLogin(gameMessage.getSenderLogin());
-        newMessage.setOpponentLogin(gameMessage.getOpponentLogin());
-        simpMessagingTemplate.convertAndSendToUser(gameMessage.getOpponentLogin(), "/secured/user/queue/specific-user", newMessage);
-    }
-
-    @GetMapping("/aa")
-    public void startGame2(@Payload MessageDTO gameMessage, Principal user, @Header("simpSessionId") String sessionId){
-        MessageDTO newMessage = new MessageDTO();
-        newMessage.setMessageType("CREATE_GAME");
-        newMessage.setSenderLogin(gameMessage.getSenderLogin());
-        newMessage.setOpponentLogin(gameMessage.getOpponentLogin());
-        simpMessagingTemplate.convertAndSendToUser("user", "/secured/user/queue/specific-user", newMessage);
     }
 
     @GetMapping("/api/friends/ask-friend")

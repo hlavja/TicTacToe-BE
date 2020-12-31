@@ -49,29 +49,11 @@ public class FriendServiceImpl implements FriendService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<FriendDTO> findAll() {
-        log.debug("Request to get all Friends");
-        return friendRepository.findAll().stream()
-            .map(friendMapper::toDto)
-            .collect(Collectors.toCollection(LinkedList::new));
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public List<FriendDTO> findByUserIdOrFriendWithId(Long userId) {
         log.debug("Request to get all Friends");
         return friendRepository.findByUserIdOrFriendWithId(userId, userId).stream()
             .map(friendMapper::toDto)
             .collect(Collectors.toCollection(LinkedList::new));
-    }
-
-
-    @Override
-    @Transactional(readOnly = true)
-    public Optional<FriendDTO> findOne(Long id) {
-        log.debug("Request to get Friend : {}", id);
-        return friendRepository.findById(id)
-            .map(friendMapper::toDto);
     }
 
     @Override

@@ -21,13 +21,6 @@ public interface GameService {
      */
     GameDTO save(GameDTO gameDTO);
 
-    /**
-     * Get all the games.
-     *
-     * @return the list of entities.
-     */
-    List<GameDTO> findAll();
-
 
     /**
      * Get the "id" game.

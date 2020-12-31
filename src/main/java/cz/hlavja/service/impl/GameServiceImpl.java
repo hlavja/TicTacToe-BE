@@ -60,15 +60,6 @@ public class GameServiceImpl implements GameService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<GameDTO> findAll() {
-        log.debug("Request to get all Games");
-        return gameRepository.findAll().stream()
-            .map(gameMapper::toDto)
-            .collect(Collectors.toCollection(LinkedList::new));
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public List<GameDTO> findByGameStatus(String gameStatus) {
         log.debug("Request to get all Games");
         return gameRepository.findByGameStatusOrderByCreatedDesc(gameStatus).stream()

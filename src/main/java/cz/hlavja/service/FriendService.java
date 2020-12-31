@@ -19,22 +19,6 @@ public interface FriendService {
     FriendDTO save(FriendDTO friendDTO);
 
     /**
-     * Get all the friends.
-     *
-     * @return the list of entities.
-     */
-    List<FriendDTO> findAll();
-
-
-    /**
-     * Get the "id" friend.
-     *
-     * @param id the id of the entity.
-     * @return the entity.
-     */
-    Optional<FriendDTO> findOne(Long id);
-
-    /**
      * Delete the "id" friend.
      *
      * @param id the id of the entity.

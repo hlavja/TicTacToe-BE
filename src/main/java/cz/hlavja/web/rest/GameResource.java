@@ -8,8 +8,6 @@ import cz.hlavja.service.dto.GameDTO;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,8 +28,6 @@ public class GameResource {
 
     private final SimpMessagingTemplate simpMessagingTemplate;
 
-    private final Logger log = LoggerFactory.getLogger(GameResource.class);
-
     private static final String ENTITY_NAME = "game";
 
     @Value("${jhipster.clientApp.name}")
@@ -44,7 +40,6 @@ public class GameResource {
         this.simpMessagingTemplate = simpMessagingTemplate;
     }
 
-
     /**
      * {@code GET  /games} : get all the games.
      *
@@ -52,7 +47,6 @@ public class GameResource {
      */
     @GetMapping("/games")
     public List<GameDTO> getAllGames() {
-        log.debug("REST request to get all Games");
         return gameService.findByGameStatus(Constants.ENDED_GAME);
     }
 
@@ -64,7 +58,6 @@ public class GameResource {
      */
     @GetMapping("/games/{id}")
     public ResponseEntity<GameDTO> getGame(@PathVariable Long id) {
-        log.debug("REST request to get Game : {}", id);
         Optional<GameDTO> gameDTO = gameService.findOne(id);
         return ResponseUtil.wrapOrNotFound(gameDTO);
     }
