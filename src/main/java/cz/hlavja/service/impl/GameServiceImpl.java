@@ -157,9 +157,10 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
+    @Transactional
     public MessageDTO move(Long id, MoveDTO move){
         // move out of board
-        if (move.getBoardY() > 3 || move.getBoardX() > 3){
+        if (move.getBoardY() > Constants.BOARD_SIZE || move.getBoardX() > Constants.BOARD_SIZE){
             return null;
         }
         Optional<GameDTO> game = gameRepository.findById(id).map(gameMapper::toDto);
@@ -181,28 +182,79 @@ public class GameServiceImpl implements GameService {
                 if (gameMoves.stream().anyMatch(m -> m.getBoardX().equals(move.getBoardX()) && m.getBoardY().equals(move.getBoardY()))){
                     return null;
                 }
+                move.setCreated(Instant.now());
                 MoveDTO newMove = moveService.save(move);
                 gameMoves.add(newMove);
-                return checkGameState(gameMoves.stream().filter(m -> m.getPlayerId().equals(loggedUser.getId())).collect(Collectors.toList()), actualGame, newMove, loggedUser);
+                // check if player won
+                checkGameState(gameMoves.stream().filter(m -> m.getPlayerId().equals(loggedUser.getId())).collect(Collectors.toList()), actualGame, newMove, loggedUser);
+                // board is full and no one won
+                if (gameMoves.size() == 9 && actualGame.getGameStatus().equals(Constants.RUNNING_GAME)){
+                    actualGame.setGameStatus(Constants.ENDED_GAME);
+                    actualGame.setResult(Constants.DRAFT_GAME);
+                    save(actualGame);
+                }
+                return createMessage(loggedUser, actualGame, Constants.ADD_MOVE, newMove);
             }
         }
         //TODO check state of game (won, tie, next turn)
         return null;
     }
 
-    private MessageDTO checkGameState(List<MoveDTO> gameMoves, GameDTO actualGame, MoveDTO newMove, UserDTO loggedUser) {
-        MessageDTO message = new MessageDTO();
-        message.setMessageType(Constants.ADD_MOVE);
-        message.setSenderLogin(loggedUser.getLogin());
-        if (actualGame.getFirstPlayerId().equals(loggedUser.getId())){
-            message.setOpponentLogin(actualGame.getSecondPlayerLogin());
-        } else {
-            message.setOpponentLogin(actualGame.getFirstPlayerLogin());
+    private void checkGameState(List<MoveDTO> gameMoves, GameDTO actualGame, MoveDTO newMove, UserDTO loggedUser) {
+        int[][] board = new int[Constants.BOARD_SIZE][Constants.BOARD_SIZE];
+        for (MoveDTO move: gameMoves) {
+            board[move.getBoardY()][move.getBoardX()] = 1;
         }
-        actualGame = setTurnToNextPlayer(actualGame);
-        message.setNewMove(newMove);
-        message.setGame(actualGame);
-        return message;
+
+        //check col
+        for(int i = 0; i < Constants.BOARD_SIZE; i++) {
+            if(board[newMove.getBoardY()][i] != 1)
+                break;
+            if(i == 2){
+                setGameToWinState(actualGame, loggedUser);
+            }
+        }
+        //check row
+        for(int i = 0; i < Constants.BOARD_SIZE; i++) {
+            if(board[i][newMove.getBoardX()] != 1)
+                break;
+            if(i == 2){
+                setGameToWinState(actualGame, loggedUser);
+            }
+        }
+        //check diag
+        if(newMove.getBoardY().equals(newMove.getBoardX())) {
+            //we're on a diagonal
+            for(int i = 0; i < Constants.BOARD_SIZE; i++){
+                if(board[i][i] != 1)
+                    break;
+                if(i == 2){
+                    setGameToWinState(actualGame, loggedUser);
+                }
+            }
+        }
+        //check anti diag
+        if(newMove.getBoardY() + newMove.getBoardX() == Constants.BOARD_SIZE - 1) {
+            for(int i = 0; i < Constants.BOARD_SIZE; i++){
+                if(board[i][(Constants.BOARD_SIZE - 1) - i] != 1)
+                    break;
+                if(i == 2){
+                    setGameToWinState(actualGame, loggedUser);
+                }
+            }
+        }
+
+        if (actualGame.getGameStatus().equals(Constants.RUNNING_GAME)) {
+            actualGame = setTurnToNextPlayer(actualGame);
+        }
+        save(actualGame);
+    }
+
+    private void setGameToWinState(GameDTO actualGame, UserDTO loggedUser) {
+        actualGame.setGameStatus(Constants.ENDED_GAME);
+        actualGame.setResult(Constants.WON_GAME);
+        actualGame.setWinningPlayerId(loggedUser.getId());
+        actualGame.setWinningPlayerLogin(loggedUser.getLogin());
     }
 
     private GameDTO setTurnToNextPlayer(GameDTO actualGame) {
@@ -213,4 +265,45 @@ public class GameServiceImpl implements GameService {
         }
         return save(actualGame);
     }
+
+    @Override
+    @Transactional
+    public MessageDTO giveUp(Long gameId) {
+        UserDTO loggedUser = userService.getUserWithAuthorities().map(UserDTO::new).orElse(null);
+        if (loggedUser == null){
+            return null;
+        }
+        Optional<GameDTO> game = gameRepository.findById(gameId).map(gameMapper::toDto);
+        //check if game exists
+        if (!game.isPresent()){
+            return null;
+        }
+        GameDTO actualGame = game.get();
+        actualGame.setGameStatus(Constants.ENDED_GAME);
+        actualGame.setResult(Constants.WON_GAME);
+        if (actualGame.getFirstPlayerId().equals(loggedUser.getId())){
+            actualGame.setWinningPlayerId(actualGame.getSecondPlayerId());
+            actualGame.setWinningPlayerLogin(actualGame.getSecondPlayerLogin());
+        } else {
+            actualGame.setWinningPlayerId(actualGame.getFirstPlayerId());
+            actualGame.setWinningPlayerLogin(actualGame.getFirstPlayerLogin());
+        }
+        save(actualGame);
+        return createMessage(loggedUser, actualGame, Constants.GIVE_UP, null);
+    }
+
+    private MessageDTO createMessage(UserDTO loggedUser, GameDTO actualGame, String messageType, MoveDTO newMove) {
+        MessageDTO message = new MessageDTO();
+        message.setMessageType(messageType);
+        message.setGame(actualGame);
+        message.setSenderLogin(loggedUser.getLogin());
+        message.setNewMove(newMove);
+        if (actualGame.getFirstPlayerId().equals(loggedUser.getId())){
+            message.setOpponentLogin(actualGame.getSecondPlayerLogin());
+        } else {
+            message.setOpponentLogin(actualGame.getFirstPlayerLogin());
+        }
+        return message;
+    }
+
 }

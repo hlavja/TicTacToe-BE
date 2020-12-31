@@ -81,4 +81,6 @@ public interface GameService {
     MessageDTO rejectGame(String opponentLogin);
 
     MessageDTO move(Long id, MoveDTO move);
+
+    MessageDTO giveUp(Long id);
 }

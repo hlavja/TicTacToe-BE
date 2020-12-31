@@ -202,8 +202,12 @@ public class GameResource {
      */
     @PostMapping("games/{id}/give-up")
     public ResponseEntity<Void> giveUp(@PathVariable Long id){
-
-
-        return new ResponseEntity<>(HttpStatus.OK);
+        MessageDTO message = gameService.giveUp(id);
+        if (message != null){
+            simpMessagingTemplate.convertAndSendToUser(message.getOpponentLogin(), "/secured/user/queue/specific-user", message);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }

@@ -24,6 +24,9 @@ public final class Constants {
     public static final String GAME_ACCEPTED = "GAME_ACCEPTED";
     public static final String GAME_REJECTED = "GAME_REJECTED";
     public static final String ADD_MOVE = "ADD_MOVE";
+    public static final String GIVE_UP = "GIVE_UP";
+
+    public static final int BOARD_SIZE = 5;
 
     private Constants() {
     }
