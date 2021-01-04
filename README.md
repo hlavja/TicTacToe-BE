@@ -38,10 +38,12 @@ docker-compose -f src/main/docker/compose.yml up -d
 docker-compose -f src/main/docker/compose.yml down
 ```
 
-##OpenAPI
+## OpenAPI
+
 Application also includes OpenAPI [documentation](/src/main/swagger/swagger.yaml) which was used to generate HttpClient code in frontend part. _Swagger Codegen CLI_ is a powerful tool and make coding faster.
 
-##Usage of application
+## Usage of application
+
 To enable dev mode you need to change **SPRING_PROFILES_ACTIVE** property in [app.yml](src/main/docker/app.yml) to **dev,swagger**. In default, application has 10 sec delay
 before start cause of creating other containers (especially database needs some time to be ready).
 
@@ -63,7 +65,8 @@ On board screen user sees who's turn, what piece he has and Give Up! button.
 
 On history tab are shown all games results in system.
 
-##Docker fck-up
+### Docker fck-up
+
 Sometimes on the first deploy to docker, frontend container may fail because of not knowing the backend service. It needed to be restarted manually
 or use compose down and then again up.
 
