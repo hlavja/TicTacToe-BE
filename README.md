@@ -63,7 +63,7 @@ On board screen user sees who's turn, what piece he has and Give Up! button.
 
 On history tab are shown all games results in system.
 
-###Docker fck-up
+##Docker fck-up
 Sometimes on the first deploy to docker, frontend container may fail because of not knowing the backend service. It needed to be restarted manually
 or use compose down and then again up.
 
