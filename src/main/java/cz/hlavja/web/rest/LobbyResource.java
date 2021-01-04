@@ -32,6 +32,7 @@ public class LobbyResource {
 
     /**
      * Return list of players in relation to caller player
+     *
      * @param userId id of logged player
      * @return list with information about all users
      */

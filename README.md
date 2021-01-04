@@ -1,126 +1,70 @@
-# TicTacToe
+# Tic Tac Toe BackEnd
 
-This application was generated using JHipster 6.10.5, you can find documentation and help at [https://www.jhipster.tech/documentation-archive/v6.10.5](https://www.jhipster.tech/documentation-archive/v6.10.5).
+A simple TicTacToe (Three-In-Rrow) app developed as semester project in [PIA](https://github.com/osvetlik/pia2020/tree/master/semester-project) on Master's studies on Faculty of applied sciences University of West Bohemia.
+This repository contains only backend [Spring Boot Application](https://spring.io/projects/spring-boot) which was build on the top of [JHipster](https://www.jhipster.tech/) platform.
 
-## Development
+For running whole project you will need also [Angular](https://angular.io/) frontend part of app - [GitHub repository](https://github.com/hlavja/TicTacToe-FrontEnd)
 
-To start your application in the dev profile, run:
+## Run application
 
-```
-./mvnw
-```
+Tools for running application: Docker, Maven
 
-For further instructions on how to develop with JHipster, have a look at [Using JHipster in development][].
+Requires also frontend part.
 
-## Building for production
+## Building containers
 
-### Packaging as jar
-
-To build the final jar and optimize the TicTacToe application for production, run:
+1. checkout [frontend](https://github.com/hlavja/TicTacToe-FrontEnd) and backend
+2. build frontend app and create container (execute in frontend root). It creates container with name pia/hlavja-tictactoe-frontend
 
 ```
-
-./mvnw -Pprod clean verify
-
-
+docker build -t pia/hlavja-tictactoe-frontend .
 ```
 
-To ensure everything worked, run:
+3. build backend app and create container (execute in backend root). It creates container with name pia/hlavja-tictactoe-backend
 
 ```
-
-java -jar target/*.jar
-
-
+mvnw -Pprod verify jib:dockerBuild
 ```
 
-Refer to [Using JHipster in production][] for more details.
-
-### Packaging as war
-
-To package your application as a war in order to deploy it to an application server, run:
+4. run docker compose in backend root
 
 ```
-
-./mvnw -Pprod,war clean verify
-
-
+docker-compose -f src/main/docker/compose.yml up -d
 ```
 
-## Testing
-
-To launch your application's tests, run:
+5. shut down whole app by
 
 ```
-./mvnw verify
+docker-compose -f src/main/docker/compose.yml down
 ```
 
-For more information, refer to the [Running tests page][].
+##OpenAPI
+Application also includes OpenAPI [documentation](/src/main/swagger/swagger.yaml) which was used to generate HttpClient code in frontend part. _Swagger Codegen CLI_ is a powerful tool and make coding faster.
 
-### Code quality
+##Usage of application
+To enable dev mode you need to change **SPRING_PROFILES_ACTIVE** property in [app.yml](src/main/docker/app.yml) to **dev,swagger**. In default, application has 10 sec delay
+before start cause of creating other containers (especially database needs some time to be ready).
 
-Sonar is used to analyse code quality. You can start a local Sonar server (accessible on http://localhost:9001) with:
+Application has three predefined users:
 
-```
-docker-compose -f src/main/docker/sonar.yml up -d
-```
+|        Login        | Password |
+| :-----------------: | :------: |
+|  user@localhost.cz  |   user   |
+| admin@localhost.cz  |  admin   |
+| system@localhost.cz |  system  |
 
-You can run a Sonar analysis with using the [sonar-scanner](https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner) or by using the maven plugin.
+User profile is accessible under email in the right part of navbar. It should be used to change user's password or change non mandatory properties.
 
-Then, run a Sonar analysis:
+Users can add or remove friends on lobby tab. Only online non friends are shown, in friends tab are shown also offline friends.
 
-```
-./mvnw -Pprod clean verify sonar:sonar
-```
+Player can be challenged to game only if not playing one already.
 
-If you need to re-run the Sonar phase, please be sure to specify at least the `initialize` phase since Sonar properties are loaded from the sonar-project.properties file.
+On board screen user sees who's turn, what piece he has and Give Up! button.
 
-```
-./mvnw initialize sonar:sonar
-```
+On history tab are shown all games results in system.
 
-For more information, refer to the [Code quality page][].
+###Docker fck-up
+Sometimes on the first deploy to docker, frontend container may fail because of not knowing the backend service. It needed to be restarted manually
+or use compose down and then again up.
 
-## Using Docker to simplify development (optional)
-
-You can use Docker to improve your JHipster development experience. A number of docker-compose configuration are available in the [src/main/docker](src/main/docker) folder to launch required third party services.
-
-For example, to start a postgresql database in a docker container, run:
-
-```
-docker-compose -f src/main/docker/postgresql.yml up -d
-```
-
-To stop it and remove the container, run:
-
-```
-docker-compose -f src/main/docker/postgresql.yml down
-```
-
-You can also fully dockerize your application and all the services that it depends on.
-To achieve this, first build a docker image of your app by running:
-
-```
-./mvnw -Pprod verify jib:dockerBuild
-```
-
-Then run:
-
-```
-docker-compose -f src/main/docker/app.yml up -d
-```
-
-For more information refer to [Using Docker and Docker-Compose][], this page also contains information on the docker-compose sub-generator (`jhipster docker-compose`), which is able to generate docker configurations for one or several JHipster applications.
-
-## Continuous Integration (optional)
-
-To configure CI for your project, run the ci-cd sub-generator (`jhipster ci-cd`), this will let you generate configuration files for a number of Continuous Integration systems. Consult the [Setting up Continuous Integration][] page for more information.
-
-[jhipster homepage and latest documentation]: https://www.jhipster.tech
-[jhipster 6.10.5 archive]: https://www.jhipster.tech/documentation-archive/v6.10.5
-[using jhipster in development]: https://www.jhipster.tech/documentation-archive/v6.10.5/development/
-[using docker and docker-compose]: https://www.jhipster.tech/documentation-archive/v6.10.5/docker-compose
-[using jhipster in production]: https://www.jhipster.tech/documentation-archive/v6.10.5/production/
-[running tests page]: https://www.jhipster.tech/documentation-archive/v6.10.5/running-tests/
-[code quality page]: https://www.jhipster.tech/documentation-archive/v6.10.5/code-quality/
-[setting up continuous integration]: https://www.jhipster.tech/documentation-archive/v6.10.5/setting-up-ci/
+**Important:** do not change backend service name or Nginx config in frontend will crash!

@@ -1,0 +1,14 @@
+version: '2'
+services:
+  hlavja-tictactoe-backend:
+    extends:
+      file: app.yml
+      service: hlavja-tictactoe-backend
+  hlavja-tictactoe-postgresql:
+    extends:
+      file: postgresql.yml
+      service: hlavja-tictactoe-postgresql
+  hlavja-tictactoe-frontend:
+    extends:
+      file: webapp.yml
+      service: hlavja-tictactoe-frontend

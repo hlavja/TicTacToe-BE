@@ -1,0 +1,784 @@
+swagger: '2.0'
+info:
+  description: TicTacToe API documentation
+  version: 1.0.0
+  title: TicTacToe API
+  contact:
+    name: Jakub Hlavac
+    email: hlavjah@gmail.com
+  license:
+    name: unlicensed
+host: 'localhost:8080'
+basePath: /
+tags:
+  - name: account-resource
+    description: Account Resource
+  - name: friend-resource
+    description: Friend Resource
+  - name: game-resource
+    description: Game Resource
+  - name: lobby-resource
+    description: Lobby Resource
+  - name: user-jwt-controller
+    description: User JWT Controller
+  - name: user-specific
+    description: User Specific
+paths:
+  /api/account:
+    get:
+      tags:
+        - account-resource
+      summary: getAccount
+      operationId: getAccountUsingGET
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/UserDTO'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+    post:
+      tags:
+        - account-resource
+      summary: saveAccount
+      operationId: saveAccountUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: userDTO
+          description: userDTO
+          required: true
+          schema:
+            $ref: '#/definitions/UserDTO'
+      responses:
+        '200':
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /api/account/change-password:
+    post:
+      tags:
+        - account-resource
+      summary: changePassword
+      operationId: changePasswordUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: passwordChangeDto
+          description: passwordChangeDto
+          required: true
+          schema:
+            $ref: '#/definitions/PasswordChangeDTO'
+      responses:
+        '200':
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /api/account/reset-password/finish:
+    post:
+      tags:
+        - account-resource
+      summary: finishPasswordReset
+      operationId: finishPasswordResetUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: keyAndPassword
+          description: keyAndPassword
+          required: true
+          schema:
+            $ref: '#/definitions/KeyAndPasswordVM'
+      responses:
+        '200':
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /api/account/reset-password/init:
+    post:
+      tags:
+        - account-resource
+      summary: requestPasswordReset
+      operationId: requestPasswordResetUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: mail
+          description: mail
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /api/authenticate:
+    get:
+      tags:
+        - account-resource
+      summary: isAuthenticated
+      operationId: isAuthenticatedUsingGET
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+    post:
+      tags:
+        - user-jwt-controller
+      summary: authorize
+      operationId: authorizeUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: loginVM
+          description: loginVM
+          required: true
+          schema:
+            $ref: '#/definitions/LoginVM'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/JWTToken'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /api/friends/add-friend:
+    post:
+      tags:
+        - friend-resource
+      summary: addFriend
+      operationId: addFriendUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: addFriendLogin
+          in: query
+          description: addFriendLogin
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/FriendDTO'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /api/friends/ask-friend:
+    get:
+      tags:
+        - user-specific
+      summary: askFriend
+      operationId: askFriendUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: friendLogin
+          in: query
+          description: friendLogin
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /api/friends/remove-friend:
+    delete:
+      tags:
+        - friend-resource
+      summary: removeFriend
+      operationId: removeFriendUsingDELETE
+      produces:
+        - '*/*'
+      parameters:
+        - name: friendId
+          in: query
+          description: friendId
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      deprecated: false
+  /api/games:
+    get:
+      tags:
+        - game-resource
+      summary: getAllGames
+      operationId: getAllGamesUsingGET
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/GameDTO'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /api/games/accept:
+    get:
+      tags:
+        - game-resource
+      summary: acceptGame
+      operationId: acceptGameUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: opponentLogin
+          in: query
+          description: opponentLogin
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/GameDTO'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /api/games/challenge:
+    get:
+      tags:
+        - game-resource
+      summary: challengeGame
+      operationId: challengeGameUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: opponentLogin
+          in: query
+          description: opponentLogin
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /api/games/reject:
+    get:
+      tags:
+        - game-resource
+      summary: rejectGame
+      operationId: rejectGameUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: opponentLogin
+          in: query
+          description: opponentLogin
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/MessageDTO'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  '/api/games/{id}':
+    get:
+      tags:
+        - game-resource
+      summary: getGame
+      operationId: getGameUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/GameDTO'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  '/api/games/{id}/give-up':
+    post:
+      tags:
+        - game-resource
+      summary: giveUp
+      operationId: giveUpUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  '/api/games/{id}/move':
+    post:
+      tags:
+        - game-resource
+      summary: addMove
+      operationId: addMoveUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: integer
+          format: int64
+        - in: body
+          name: move
+          description: move
+          required: true
+          schema:
+            $ref: '#/definitions/MoveDTO'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/MessageDTO'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /api/get-players:
+    get:
+      tags:
+        - lobby-resource
+      summary: getOnlineUsers
+      operationId: getOnlineUsersUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: userId
+          in: query
+          description: userId
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PlayerDTO'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /api/register:
+    post:
+      tags:
+        - account-resource
+      summary: registerAccount
+      operationId: registerAccountUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: managedUserVM
+          description: managedUserVM
+          required: true
+          schema:
+            $ref: '#/definitions/ManagedUserVM'
+      responses:
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+definitions:
+  FriendDTO:
+    type: object
+    properties:
+      friendWithId:
+        type: integer
+        format: int64
+      id:
+        type: integer
+        format: int64
+      userId:
+        type: integer
+        format: int64
+    title: FriendDTO
+    description: |-
+      The Friend entity.
+      @author hlavja
+  GameDTO:
+    type: object
+    properties:
+      created:
+        type: string
+        format: date-time
+      firstPlayerId:
+        type: integer
+        format: int64
+      firstPlayerLogin:
+        type: string
+      gameStatus:
+        type: string
+      gameType:
+        type: string
+      id:
+        type: integer
+        format: int64
+      result:
+        type: string
+      secondPlayerId:
+        type: integer
+        format: int64
+      secondPlayerLogin:
+        type: string
+      turnUserId:
+        type: integer
+        format: int64
+      turnUserLogin:
+        type: string
+      winningPlayerId:
+        type: integer
+        format: int64
+      winningPlayerLogin:
+        type: string
+    title: GameDTO
+    description: |-
+      The Game entity.
+      @author hlavja
+  JWTToken:
+    type: object
+    properties:
+      id_token:
+        type: string
+    title: JWTToken
+  KeyAndPasswordVM:
+    type: object
+    properties:
+      key:
+        type: string
+      newPassword:
+        type: string
+    title: KeyAndPasswordVM
+  LoginVM:
+    type: object
+    required:
+      - password
+      - username
+    properties:
+      password:
+        type: string
+        minLength: 4
+        maxLength: 100
+      rememberMe:
+        type: boolean
+      username:
+        type: string
+        minLength: 1
+        maxLength: 50
+    title: LoginVM
+  ManagedUserVM:
+    type: object
+    properties:
+      activated:
+        type: boolean
+      authorities:
+        type: array
+        items:
+          type: string
+      createdBy:
+        type: string
+      createdDate:
+        type: string
+        format: date-time
+      email:
+        type: string
+        minLength: 5
+        maxLength: 254
+      firstName:
+        type: string
+        minLength: 0
+        maxLength: 50
+      id:
+        type: integer
+        format: int64
+      imageUrl:
+        type: string
+        minLength: 0
+        maxLength: 256
+      langKey:
+        type: string
+        minLength: 2
+        maxLength: 10
+      lastModifiedBy:
+        type: string
+      lastModifiedDate:
+        type: string
+        format: date-time
+      lastName:
+        type: string
+        minLength: 0
+        maxLength: 50
+      login:
+        type: string
+        minLength: 1
+        maxLength: 50
+      password:
+        type: string
+        minLength: 4
+        maxLength: 100
+    title: ManagedUserVM
+  MessageDTO:
+    type: object
+    properties:
+      game:
+        $ref: '#/definitions/GameDTO'
+      messageType:
+        type: string
+      newMove:
+        $ref: '#/definitions/MoveDTO'
+      opponentLogin:
+        type: string
+      senderLogin:
+        type: string
+    title: MessageDTO
+  MoveDTO:
+    type: object
+    properties:
+      boardX:
+        type: integer
+        format: int32
+      boardY:
+        type: integer
+        format: int32
+      created:
+        type: string
+        format: date-time
+      gameId:
+        type: integer
+        format: int64
+      id:
+        type: integer
+        format: int64
+      playerId:
+        type: integer
+        format: int64
+    title: MoveDTO
+    description: |-
+      The Move entity.
+      @author hlavja
+  PasswordChangeDTO:
+    type: object
+    properties:
+      currentPassword:
+        type: string
+      newPassword:
+        type: string
+    title: PasswordChangeDTO
+  PlayerDTO:
+    type: object
+    properties:
+      available:
+        type: boolean
+      friend:
+        type: boolean
+      login:
+        type: string
+      online:
+        type: boolean
+      playerId:
+        type: integer
+        format: int64
+    title: PlayerDTO
+  UserDTO:
+    type: object
+    properties:
+      activated:
+        type: boolean
+      authorities:
+        type: array
+        items:
+          type: string
+      createdBy:
+        type: string
+      createdDate:
+        type: string
+        format: date-time
+      email:
+        type: string
+        minLength: 5
+        maxLength: 254
+      firstName:
+        type: string
+        minLength: 0
+        maxLength: 50
+      id:
+        type: integer
+        format: int64
+      imageUrl:
+        type: string
+        minLength: 0
+        maxLength: 256
+      langKey:
+        type: string
+        minLength: 2
+        maxLength: 10
+      lastModifiedBy:
+        type: string
+      lastModifiedDate:
+        type: string
+        format: date-time
+      lastName:
+        type: string
+        minLength: 0
+        maxLength: 50
+      login:
+        type: string
+        minLength: 1
+        maxLength: 50
+    title: UserDTO

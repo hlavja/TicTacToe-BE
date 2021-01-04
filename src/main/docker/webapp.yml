@@ -1,0 +1,6 @@
+version: '2'
+services:
+  hlavja-tictactoe-frontend:
+    image: pia/hlavja-tictactoe-frontend
+    ports:
+      - 80:80

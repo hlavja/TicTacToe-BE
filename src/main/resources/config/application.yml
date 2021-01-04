@@ -146,11 +146,11 @@ jhipster:
     default-include-pattern: /api/.*
     title: TicTacToe API
     description: TicTacToe API documentation
-    version: 0.0.1
+    version: 1.0.0
     terms-of-service-url:
-    contact-name:
+    contact-name: Jakub Hlavac
     contact-url:
-    contact-email:
+    contact-email: hlavjah@gmail.com
     license: unlicensed
     license-url:
 # ===================================================================
