@@ -47,7 +47,8 @@ Application also includes OpenAPI [documentation](/src/main/swagger/swagger.yaml
 To enable dev mode you need to change **SPRING_PROFILES_ACTIVE** property in [app.yml](src/main/docker/app.yml) to **dev,swagger**. In default, application has 10 sec delay
 before start cause of creating other containers (especially database needs some time to be ready).
 
-Application has three predefined users:
+Application has three predefined users which are created by [Liquibase](https://www.liquibase.org/) at the start of application.
+In this step is also created the whole DB structure.
 
 |        Login        | Password |
 | :-----------------: | :------: |
