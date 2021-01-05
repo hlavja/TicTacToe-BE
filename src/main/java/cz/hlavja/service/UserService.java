@@ -121,7 +121,6 @@ public class UserService {
         newUser.setActivationKey(RandomUtil.generateActivationKey());
         Set<Authority> authorities = new HashSet<>();
         authorityRepository.findById(AuthoritiesConstants.USER).ifPresent(authorities::add);
-        authorityRepository.findById(AuthoritiesConstants.ADMIN).ifPresent(authorities::add);
         newUser.setAuthorities(authorities);
         userRepository.save(newUser);
         this.clearUserCaches(newUser);
@@ -175,32 +174,24 @@ public class UserService {
     /**
      * Update all information for a specific user, and return the modified user.
      *
-     * @param userDTO user to update.
+     * @param id user to update.
+     * @param promote if promote
      * @return updated user.
      */
-    public Optional<UserDTO> updateUser(UserDTO userDTO) {
+    public Optional<UserDTO> updateUser(Long id, boolean promote) {
         return Optional.of(userRepository
-            .findById(userDTO.getId()))
+            .findById(id))
             .filter(Optional::isPresent)
             .map(Optional::get)
             .map(user -> {
                 this.clearUserCaches(user);
-                user.setLogin(userDTO.getEmail().toLowerCase());
-                user.setFirstName(userDTO.getFirstName());
-                user.setLastName(userDTO.getLastName());
-                if (userDTO.getEmail() != null) {
-                    user.setEmail(userDTO.getEmail().toLowerCase());
-                }
-                user.setImageUrl(userDTO.getImageUrl());
-                user.setActivated(userDTO.isActivated());
-                user.setLangKey(userDTO.getLangKey());
                 Set<Authority> managedAuthorities = user.getAuthorities();
                 managedAuthorities.clear();
-                userDTO.getAuthorities().stream()
-                    .map(authorityRepository::findById)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .forEach(managedAuthorities::add);
+                if (promote){
+                    authorityRepository.findById(AuthoritiesConstants.ADMIN).ifPresent(managedAuthorities::add);
+                } else {
+                    authorityRepository.findById(AuthoritiesConstants.USER).ifPresent(managedAuthorities::add);
+                }
                 this.clearUserCaches(user);
                 log.debug("Changed Information for User: {}", user);
                 return user;
@@ -304,5 +295,11 @@ public class UserService {
         if (user.getEmail() != null) {
             Objects.requireNonNull(cacheManager.getCache(UserRepository.USERS_BY_EMAIL_CACHE)).evict(user.getEmail());
         }
+    }
+
+    public List<UserDTO> findAll() {
+        return userRepository.findAll().stream()
+            .map(UserDTO::new)
+            .collect(Collectors.toCollection(LinkedList::new));
     }
 }

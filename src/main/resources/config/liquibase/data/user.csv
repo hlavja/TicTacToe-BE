@@ -1,4 +1,4 @@
 id;login;password_hash;first_name;last_name;email;image_url;activated;lang_key;created_by;last_modified_by
-1;system@localhost.cz;$2a$10$mE.qmcV0mFU5NcKh73TZx.z4ueI/.bDWbj0T1BYyqP481kGGarKLG;System;System;system@localhost.cz;;true;en;system;system
+1;system@localhost.cz;$2a$10$4r1cTDM7yMQGBiHW4bTrdez.KNuqzRNKmg66MvTTm0cEM70gjY2Ri;System;System;system@localhost.cz;;true;en;system;system
 2;admin@localhost.cz;$2a$10$gSAhZrxMllrbgj/kkK9UceBPpChGWJA7SYIb1Mqo.n5aNLq1/oRrC;Administrator;Administrator;admin@localhost.cz;;true;en;system;system
 3;user@localhost.cz;$2a$10$VEjxo0jq2YG9Rbk2HmX9S.k1uZBGYUHdUcid3g/vfiEl7lwWgOH/K;User;User;user@localhost.cz;;true;en;system;system

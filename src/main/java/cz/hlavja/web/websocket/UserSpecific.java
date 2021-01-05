@@ -43,4 +43,19 @@ public class UserSpecific {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    @GetMapping("/api/games/cancel-challenge")
+    public ResponseEntity<Void> cancelChallenge(@RequestParam() String opponentLogin){
+        UserDTO loggedUser = userService.getUserWithAuthorities().map(UserDTO::new).orElse(null);
+        if (loggedUser != null){
+            MessageDTO message = new MessageDTO();
+            message.setMessageType(Constants.CHALLENGE_CANCELLED);
+            message.setSenderLogin(loggedUser.getLogin());
+            message.setOpponentLogin(opponentLogin);
+            simpMessagingTemplate.convertAndSendToUser(message.getOpponentLogin(), "/secured/user/queue/specific-user", message);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 }
