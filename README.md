@@ -32,7 +32,9 @@ mvnw -Pprod verify jib:dockerBuild
 docker-compose -f src/main/docker/compose.yml up -d
 ```
 
-5. shut down whole app by
+5. web application will run at [localhost](http://localhost/) on default port 80, after successful startup
+
+6. shut down whole app by
 
 ```
 docker-compose -f src/main/docker/compose.yml down
