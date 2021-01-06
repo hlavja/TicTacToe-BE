@@ -127,6 +127,20 @@ public class AccountResource {
     }
 
     /**
+     * {@code POST  /account/{login}/set-password} : changes the current user's password.
+     *
+     * @param passwordChangeDto current and new password.
+     * @throws InvalidPasswordException {@code 400 (Bad Request)} if the new password is incorrect.
+     */
+    @PostMapping(path = "/account/{login}/set-password")
+    public void setPassword(@PathVariable String login, @RequestBody PasswordChangeDTO passwordChangeDto) {
+        if (!checkPasswordLength(passwordChangeDto.getNewPassword())) {
+            throw new InvalidPasswordException();
+        }
+        userService.setPassword(passwordChangeDto.getNewPassword(), login);
+    }
+
+    /**
      * {@code POST   /account/reset-password/init} : Send an email to reset the password of the user.
      *
      * @param mail the mail of the user.
